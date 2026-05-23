@@ -2,7 +2,7 @@
 
 Contador de fichas para juegos de mesa, pensado para usar en el móvil en horizontal durante la partida.
 
-**Demo:** https://gabriel-tbc.github.io/fichas_juegos/
+**Demo:** https://fichas-juegos.vercel.app/
 
 ![preview](https://img.shields.io/badge/web-static-blue) ![license](https://img.shields.io/badge/license-MIT-green)
 
@@ -25,7 +25,7 @@ Sin backend, sin base de datos, sin tracking. Todo el estado vive en `localStora
 
 ## Cómo usar
 
-1. Abre la [demo](https://gabriel-tbc.github.io/fichas_juegos/) en el móvil.
+1. Abre la [demo](https://fichas-juegos.vercel.app/) en el móvil.
 2. Gira el móvil en horizontal para ver las 5 fichas en fila.
 3. Pulsa `+` y `−` en cada ficha para subir o bajar el contador.
 4. Al acabar tu turno, pulsa el botón redondo de "Reiniciar" arriba a la derecha.
@@ -52,7 +52,7 @@ Cualquier push a `main` regenera automáticamente el sitio publicado en GitHub P
 
 ## Créditos
 
-Diseño original generado con [Claude Design](https://claude.ai/design) e iterado con [Claude Code](https://claude.com/claude-code) para añadir sonidos, modo pantalla completa, ajustes de UX móvil y despliegue automático.
+El diseño visual está desarrollado con Claude Design, todo sea dicho.
 
 ## Licencia
 
