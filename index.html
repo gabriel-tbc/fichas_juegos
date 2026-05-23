@@ -321,7 +321,7 @@
   .counter-row {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     gap: 6px;
     margin-top: auto;
     width: 100%;
@@ -361,10 +361,12 @@
   }
 
   .count-display {
-    flex: 1 1 auto;
-    min-width: 0;
-    height: clamp(40px, 8vh, 56px);
-    border-radius: 6px;
+    margin-top: auto;
+    margin-bottom: 0;
+    min-width: clamp(72px, 14vw, 110px);
+    padding: 0 20px;
+    height: clamp(48px, 9vh, 66px);
+    border-radius: 8px;
     background: linear-gradient(180deg, #050302 0%, #100905 100%);
     border: 2px solid rgba(0,0,0,0.7);
     box-shadow:
@@ -376,7 +378,7 @@
     justify-content: center;
     font-family: 'Cinzel', serif;
     font-weight: 700;
-    font-size: clamp(22px, 4.6vh, 32px);
+    font-size: clamp(28px, 6vh, 42px);
     color: var(--num-color);
     text-shadow: 0 0 10px var(--num-color), 0 0 22px rgba(255,255,255,0.12);
   }
@@ -629,9 +631,9 @@
     <div class="vignette"></div>
     <div class="panel-label">Dinero</div>
     <div class="icon-frame"><svg><use href="#ico-coins"/></svg></div>
+    <div class="count-display" data-display>0</div>
     <div class="counter-row">
       <button class="count-btn" data-act="dec" aria-label="restar">−</button>
-      <div class="count-display" data-display>0</div>
       <button class="count-btn" data-act="inc" aria-label="sumar">+</button>
     </div>
   </section>
@@ -642,9 +644,9 @@
     <div class="vignette"></div>
     <div class="panel-label">Vida</div>
     <div class="icon-frame"><svg><use href="#ico-cross"/></svg></div>
+    <div class="count-display" data-display>0</div>
     <div class="counter-row">
       <button class="count-btn" data-act="dec" aria-label="restar">−</button>
-      <div class="count-display" data-display>0</div>
       <button class="count-btn" data-act="inc" aria-label="sumar">+</button>
     </div>
   </section>
@@ -655,9 +657,9 @@
     <div class="vignette"></div>
     <div class="panel-label">Daño</div>
     <div class="icon-frame"><svg><use href="#ico-swords"/></svg></div>
+    <div class="count-display" data-display>0</div>
     <div class="counter-row">
       <button class="count-btn" data-act="dec" aria-label="restar">−</button>
-      <div class="count-display" data-display>0</div>
       <button class="count-btn" data-act="inc" aria-label="sumar">+</button>
     </div>
   </section>
@@ -668,9 +670,9 @@
     <div class="vignette"></div>
     <div class="panel-label">Misión</div>
     <div class="icon-frame"><svg><use href="#ico-scroll"/></svg></div>
+    <div class="count-display" data-display>0</div>
     <div class="counter-row">
       <button class="count-btn" data-act="dec" aria-label="restar">−</button>
-      <div class="count-display" data-display>0</div>
       <button class="count-btn" data-act="inc" aria-label="sumar">+</button>
     </div>
   </section>
@@ -681,9 +683,9 @@
     <div class="vignette"></div>
     <div class="panel-label">Ati</div>
     <div class="icon-frame"><svg><use href="#ico-atium"/></svg></div>
+    <div class="count-display" data-display>0</div>
     <div class="counter-row">
       <button class="count-btn" data-act="dec" aria-label="restar">−</button>
-      <div class="count-display" data-display>0</div>
       <button class="count-btn" data-act="inc" aria-label="sumar">+</button>
     </div>
   </section>
