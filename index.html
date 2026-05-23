@@ -3,7 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
-<title>Contador de Fichas — Mistborn</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#1c0e2a">
+<title>Contador de Fichas</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Cormorant+Garamond:wght@500;600&display=swap" rel="stylesheet">
@@ -114,6 +118,33 @@
   .swatch[data-style="sapphire"] { background: radial-gradient(circle at 40% 35%, #6fb6f0, #1f5fb8 55%, #0b285c 100%); }
   .swatch[data-style="ruby"]     { background: radial-gradient(circle at 40% 35%, #f17285, #b41530 55%, #5a0612 100%); }
   .swatch[data-style="citrine"]  { background: radial-gradient(circle at 40% 35%, #ffd76b, #c89018 55%, #6b4906 100%); }
+
+  /* TOP-RIGHT group (fullscreen + reset) */
+  .top-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .icon-btn {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(180deg, #2a1f12, #0f0a06);
+    color: var(--gold);
+    border: 1px solid rgba(232,199,114,0.45);
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    box-shadow:
+      inset 0 1px 0 rgba(232,199,114,0.18),
+      0 2px 6px rgba(0,0,0,0.6);
+    transition: filter 0.15s ease, transform 0.08s ease;
+  }
+  .icon-btn:hover { filter: brightness(1.2); }
+  .icon-btn:active { transform: translateY(1px); }
+  .icon-btn svg { width: 16px; height: 16px; }
 
   /* RESET ALL BUTTON */
   .reset-all {
@@ -529,6 +560,26 @@
         <polyline points="3,3 7,5.5 5,9.5"/>
       </g>
     </symbol>
+
+    <!-- Fullscreen enter (four corner arrows pointing outward) -->
+    <symbol id="ico-fs-enter" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="4,9 4,4 9,4"/>
+        <polyline points="20,9 20,4 15,4"/>
+        <polyline points="4,15 4,20 9,20"/>
+        <polyline points="20,15 20,20 15,20"/>
+      </g>
+    </symbol>
+
+    <!-- Fullscreen exit (four corner arrows pointing inward) -->
+    <symbol id="ico-fs-exit" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="9,4 9,9 4,9"/>
+        <polyline points="15,4 15,9 20,9"/>
+        <polyline points="9,20 9,15 4,15"/>
+        <polyline points="15,20 15,15 20,15"/>
+      </g>
+    </symbol>
   </defs>
 </svg>
 
@@ -544,10 +595,15 @@
     <button class="swatch"        data-style="citrine"  aria-label="Citrino"></button>
   </div>
 
-  <button class="reset-all" id="resetAll" aria-label="Reiniciar todo">
-    <svg><use href="#ico-reset"/></svg>
-    <span>Reiniciar</span>
-  </button>
+  <div class="top-right">
+    <button class="icon-btn" id="fsToggle" aria-label="Pantalla completa">
+      <svg><use href="#ico-fs-enter"/></svg>
+    </button>
+    <button class="reset-all" id="resetAll" aria-label="Reiniciar todo">
+      <svg><use href="#ico-reset"/></svg>
+      <span>Reiniciar</span>
+    </button>
+  </div>
 </div>
 
 <!-- ============ COUNTERS ============ -->
@@ -623,6 +679,50 @@
 <div class="toast" id="toast">Contadores reiniciados</div>
 
 <script>
+  // ---------- Audio (synthesized via Web Audio API, no files needed) ----------
+  let audioCtx = null;
+  function getAudio() {
+    if (audioCtx) return audioCtx;
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    if (!Ctx) return null;
+    audioCtx = new Ctx();
+    return audioCtx;
+  }
+  function clickSound() {
+    const ctx = getAudio(); if (!ctx) return;
+    const t = ctx.currentTime;
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.type = 'triangle';
+    o.frequency.setValueAtTime(900, t);
+    o.frequency.exponentialRampToValueAtTime(420, t + 0.05);
+    g.gain.setValueAtTime(0.14, t);
+    g.gain.exponentialRampToValueAtTime(0.0005, t + 0.08);
+    o.connect(g).connect(ctx.destination);
+    o.start(t);
+    o.stop(t + 0.09);
+  }
+  function sweepSound() {
+    const ctx = getAudio(); if (!ctx) return;
+    const t = ctx.currentTime;
+    const dur = 0.32;
+    const buf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * dur), ctx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+    const src = ctx.createBufferSource(); src.buffer = buf;
+    const f = ctx.createBiquadFilter();
+    f.type = 'bandpass';
+    f.frequency.setValueAtTime(4500, t);
+    f.frequency.exponentialRampToValueAtTime(380, t + dur);
+    f.Q.value = 6;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.32, t);
+    g.gain.exponentialRampToValueAtTime(0.0005, t + dur);
+    src.connect(f).connect(g).connect(ctx.destination);
+    src.start(t);
+    src.stop(t + dur + 0.02);
+  }
+
   // ---------- Background tile builder ----------
   function buildTileURI(hex) {
     const svg = `
@@ -701,6 +801,7 @@
         counts[id] = Math.max(0, counts[id] + delta);
         displays[id].textContent = counts[id];
         saveCounts(counts);
+        clickSound();
         displays[id].animate(
           [{ transform: 'scale(1)' }, { transform: 'scale(1.12)' }, { transform: 'scale(1)' }],
           { duration: 200, easing: 'ease-out' }
@@ -723,6 +824,7 @@
     counts = { ...DEFAULTS };
     saveCounts(counts);
     render();
+    sweepSound();
     // ripple animation across all displays
     Object.values(displays).forEach(d => {
       d.animate(
@@ -734,6 +836,30 @@
     });
     showToast('Turno reiniciado');
   });
+
+  // ---------- Fullscreen toggle ----------
+  const fsBtn = document.getElementById('fsToggle');
+  const fsUse = fsBtn.querySelector('use');
+  function isFs() {
+    return !!(document.fullscreenElement || document.webkitFullscreenElement);
+  }
+  function syncFsIcon() {
+    fsUse.setAttribute('href', isFs() ? '#ico-fs-exit' : '#ico-fs-enter');
+  }
+  fsBtn.addEventListener('click', async () => {
+    try {
+      if (!isFs()) {
+        const el = document.documentElement;
+        const req = el.requestFullscreen || el.webkitRequestFullscreen;
+        if (req) await req.call(el);
+      } else {
+        const exit = document.exitFullscreen || document.webkitExitFullscreen;
+        if (exit) await exit.call(document);
+      }
+    } catch (_) {}
+  });
+  document.addEventListener('fullscreenchange', syncFsIcon);
+  document.addEventListener('webkitfullscreenchange', syncFsIcon);
 
   // Initialize background from storage or default
   applyStyle(localStorage.getItem('mb-bg') || 'amethyst');
