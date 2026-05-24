@@ -1,6 +1,7 @@
 # fichas_juegos
 
 Contador de fichas para juegos de mesa, pensado para usar en el móvil en horizontal durante la partida.
+Recomendadísimo usar en el móvil, en modo horizontal.
 
 **Demo:** https://fichas-juegos.vercel.app/
 
